@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: finance-platform-db
+    environment:
+      POSTGRES_DB: finance_platform
+      POSTGRES_USER: finance_user
+      POSTGRES_PASSWORD: finance_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - finance-platform-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finance_user -d finance_platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: finance-platform-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/finance_platform
+      DB_USERNAME: finance_user
+      DB_PASSWORD: finance_pass
+      # Override JWT_SECRET here (or in a .env file) before any real deploy —
+      # the value baked into application.yml is a dev-only placeholder.
+      JWT_SECRET: ${JWT_SECRET:-dev-only-secret-change-me-before-deploy-1234567890}
+    ports:
+      - "8080:8080"
+
+volumes:
+  finance-platform-data:
