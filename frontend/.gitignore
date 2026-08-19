@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+
+# .env is intentionally NOT ignored here — it only holds a public API base
+# URL, not a secret. If that ever changes (e.g. an API key gets added),
+# move it to .env.local and add that here instead.
