@@ -4,6 +4,7 @@ import {
   Wallet,
   ArrowLeftRight,
   PiggyBank,
+  Repeat,
   LogOut,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
@@ -13,6 +14,7 @@ const navItems = [
   { to: '/accounts', label: 'Accounts', icon: Wallet },
   { to: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
   { to: '/budgets', label: 'Budgets', icon: PiggyBank },
+  { to: '/recurring', label: 'Recurring', icon: Repeat },
 ]
 
 export function AppLayout() {
@@ -76,3 +78,4 @@ export function AppLayout() {
     </div>
   )
 }
+

@@ -52,6 +52,7 @@ export interface Transaction {
   accountId: string
   transferAccountId: string | null
   categoryId: string | null
+  recurringTransactionId: string | null
   type: TransactionType
   amount: number
   date: string
@@ -128,4 +129,36 @@ export interface BudgetRequest {
   startDate: string
   endDate?: string | null
   categoryIds: string[]
+}
+
+export type RecurringFrequency = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY'
+
+export interface RecurringTransaction {
+  id: string
+  accountId: string
+  transferAccountId: string | null
+  categoryId: string | null
+  type: TransactionType
+  amount: number
+  frequency: RecurringFrequency
+  startDate: string
+  nextOccurrenceDate: string
+  endDate: string | null
+  description: string | null
+  merchant: string | null
+  active: boolean
+}
+
+export interface RecurringTransactionRequest {
+  accountId: string
+  transferAccountId?: string | null
+  categoryId?: string | null
+  type: TransactionType
+  amount: number
+  frequency: RecurringFrequency
+  startDate: string
+  endDate?: string | null
+  description?: string
+  merchant?: string
+  active?: boolean
 }
