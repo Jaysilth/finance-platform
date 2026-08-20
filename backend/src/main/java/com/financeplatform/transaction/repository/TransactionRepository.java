@@ -28,4 +28,24 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             @Param("from") LocalDate from,
             @Param("to") LocalDate to
     );
+
+    // Powers the analytics summary. TRANSFER is deliberately excluded by the
+    // `t.type <> 'TRANSFER'` filter — this is the same rule enforced in
+    // TransactionService's balance logic, restated here because this query
+    // bypasses that service and reads straight from the DB. If a future
+    // TransactionType is ever added, revisit this filter explicitly rather
+    // than assuming it's still correct.
+    @Query("""
+            SELECT t.categoryId, t.type, SUM(t.amount)
+            FROM Transaction t
+            WHERE t.userId = :userId
+            AND t.date BETWEEN :from AND :to
+            AND t.type <> com.financeplatform.transaction.entity.TransactionType.TRANSFER
+            GROUP BY t.categoryId, t.type
+            """)
+    java.util.List<Object[]> aggregateByCategoryAndType(
+            @Param("userId") UUID userId,
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to
+    );
 }
