@@ -48,4 +48,23 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             @Param("from") LocalDate from,
             @Param("to") LocalDate to
     );
+
+    // Powers budget status. Deliberately EXPENSE-only and TRANSFER-excluded
+    // by construction — a budget tracks spending, never income or transfers
+    // between the user's own accounts. Returns 0 (via COALESCE), not null,
+    // when nothing matches, so callers don't need a null check.
+    @Query("""
+            SELECT COALESCE(SUM(t.amount), 0)
+            FROM Transaction t
+            WHERE t.userId = :userId
+            AND t.type = com.financeplatform.transaction.entity.TransactionType.EXPENSE
+            AND t.categoryId IN :categoryIds
+            AND t.date BETWEEN :from AND :to
+            """)
+    java.math.BigDecimal sumExpensesByCategoriesAndDateRange(
+            @Param("userId") UUID userId,
+            @Param("categoryIds") java.util.Set<UUID> categoryIds,
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to
+    );
 }
