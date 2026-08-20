@@ -48,6 +48,23 @@ public class TransactionService {
 
     @Transactional
     public TransactionResponse create(TransactionRequest request, UUID userId) {
+        Transaction transaction = buildAndApply(request, userId, null);
+        return TransactionResponse.from(transactionRepository.save(transaction));
+    }
+
+    /**
+     * Used only by RecurringTransactionScheduler / the manual "run due now"
+     * endpoint. Identical to create() except it stamps recurringTransactionId
+     * so the generated row is traceable back to its definition — see the
+     * comment on Transaction.recurringTransactionId.
+     */
+    @Transactional
+    public TransactionResponse createFromRecurrence(TransactionRequest request, UUID userId, UUID recurringTransactionId) {
+        Transaction transaction = buildAndApply(request, userId, recurringTransactionId);
+        return TransactionResponse.from(transactionRepository.save(transaction));
+    }
+
+    private Transaction buildAndApply(TransactionRequest request, UUID userId, UUID recurringTransactionId) {
         Account source = accountService.findOwned(request.accountId(), userId);
 
         Account destination = null;
@@ -68,6 +85,7 @@ public class TransactionService {
                 .accountId(request.accountId())
                 .transferAccountId(request.transferAccountId())
                 .categoryId(request.categoryId())
+                .recurringTransactionId(recurringTransactionId)
                 .type(request.type())
                 .amount(request.amount())
                 .date(request.date())
@@ -77,9 +95,7 @@ public class TransactionService {
                 .build();
 
         applyBalanceEffect(source, destination, transaction, 1);
-        transaction = transactionRepository.save(transaction);
-
-        return TransactionResponse.from(transaction);
+        return transaction;
     }
 
     @Transactional

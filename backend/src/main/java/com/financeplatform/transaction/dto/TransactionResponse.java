@@ -15,6 +15,7 @@ public record TransactionResponse(
         UUID accountId,
         UUID transferAccountId,
         UUID categoryId,
+        UUID recurringTransactionId,
         TransactionType type,
         BigDecimal amount,
         LocalDate date,
@@ -29,6 +30,7 @@ public record TransactionResponse(
                 .accountId(t.getAccountId())
                 .transferAccountId(t.getTransferAccountId())
                 .categoryId(t.getCategoryId())
+                .recurringTransactionId(t.getRecurringTransactionId())
                 .type(t.getType())
                 .amount(t.getAmount())
                 .date(t.getDate())
