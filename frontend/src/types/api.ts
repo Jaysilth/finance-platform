@@ -102,3 +102,30 @@ export interface AuthResponse {
   email: string
   fullName: string
 }
+
+export type BudgetPeriodType = 'MONTHLY' | 'CUSTOM'
+
+export interface Budget {
+  id: string
+  name: string
+  periodType: BudgetPeriodType
+  amount: number
+  startDate: string
+  endDate: string | null
+  categoryIds: string[]
+  periodFrom: string
+  periodTo: string
+  spent: number
+  remaining: number
+  percentUsed: number
+  active: boolean
+}
+
+export interface BudgetRequest {
+  name: string
+  periodType: BudgetPeriodType
+  amount: number
+  startDate: string
+  endDate?: string | null
+  categoryIds: string[]
+}
