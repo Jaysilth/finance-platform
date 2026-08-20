@@ -81,6 +81,21 @@ export interface Page<T> {
   size: number
 }
 
+export interface CategoryTotal {
+  categoryId: string | null
+  type: 'INCOME' | 'EXPENSE'
+  total: number
+}
+
+export interface AnalyticsSummary {
+  from: string
+  to: string
+  totalIncome: number
+  totalExpense: number
+  net: number
+  categoryBreakdown: CategoryTotal[]
+}
+
 export interface AuthResponse {
   token: string
   userId: string
